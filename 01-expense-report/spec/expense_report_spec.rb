@@ -7,14 +7,16 @@ RSpec.describe ExpenseReport do
   let(:input) { [1721, 979, 366, 299, 675, 1456] }
   let(:expense_report) { ExpenseReport.new(input) }
 
-  it 'finds two entries that their sum is 2020' do
-    factors = expense_report.find_wrong_entries
+  context 'two entries wrong' do
+    it 'finds two entries that their sum is 2020' do
+      factors = expense_report.find_wrong_entries
 
-    expect(factors.max).to eq 1721
-    expect(factors.min).to eq 299
-  end
+      expect(factors.max).to eq 1721
+      expect(factors.min).to eq 299
+    end
 
-  it 'calculate right value' do
-    expect(expense_report.calculate).to eq 514_579
+    it 'calculate right value' do
+      expect(expense_report.calculate).to eq 514_579
+    end
   end
 end
