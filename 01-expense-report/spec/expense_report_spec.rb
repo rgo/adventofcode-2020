@@ -12,4 +12,10 @@ RSpec.describe ExpenseReport do
       expect(expense_report.calculate(2)).to eq 514_579
     end
   end
+
+  context 'three entries wrong' do
+    it 'calculate right value' do
+      expect(expense_report.calculate(3)).to eq 241_861_950
+    end
+  end
 end
