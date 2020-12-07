@@ -9,19 +9,9 @@ class ExpenseReport
     @input = input.map(&:to_i)
   end
 
-  def find_wrong_entries
-    @input.each_with_index do |entry, index|
-      next if entry > SUM
-
-      wanted_value = SUM - entry
-      @input[index..-1].each do |value|
-        return @wrong_values = [entry, wanted_value] if value == wanted_value
-      end
-    end
-  end
-
-  def calculate
-    @wrong_values ||= find_wrong_entries
-    @wrong_values.inject(:*)
+  def calculate(n_entries)
+    combinations = @input.combination(n_entries)
+    wrong_entries = combinations.find { |v| v.inject(:+) == SUM }
+    wrong_entries.inject(:*)
   end
 end
