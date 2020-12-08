@@ -1,5 +1,4 @@
 #! /usr/bin/env ruby
-
 # frozen_string_literal: true
 
 class PasswordValidator
@@ -8,7 +7,7 @@ class PasswordValidator
   def self.validate(input)
     Array(input).select do |line|
       parsed_line = parser(line)
-      invalid_line? parsed_line
+      valid_line? parsed_line
     end
   end
 
@@ -16,9 +15,9 @@ class PasswordValidator
     line.match LINE_FORMAT
   end
 
-  def self.invalid_line?(parsed_line)
+  def self.valid_line?(parsed_line)
     count_chars = parsed_line[:password].count(parsed_line[:char])
 
-    count_chars < parsed_line[:min].to_i || count_chars > parsed_line[:max].to_i
+    count_chars >= parsed_line[:min].to_i && count_chars <= parsed_line[:max].to_i
   end
 end
