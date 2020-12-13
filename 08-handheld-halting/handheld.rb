@@ -5,7 +5,8 @@ module Handheld
   end
 
   def self.load(code)
-    registers = { accumulator: 0 }
+    registers = { accumulator: 0, instruction_pointer: 0 }
+    instructions = []
 
     lines = code.split("\n")
 
@@ -17,11 +18,18 @@ module Handheld
                       Instruction::Nop.build(params)
                     when 'acc'
                       Instruction::Acc.build(params)
+                    when 'jmp'
+                      Instruction::Jmp.build(params)
                     else
                       raise ParseError, "Unknow instruction: #{operation}"
                     end
-      instruction.execute(registers)
+      instructions << instruction
     end
+
+    while registers[:instruction_pointer] < instructions.size
+      instructions[registers[:instruction_pointer]].execute(registers)
+    end
+
     registers
   end
 
@@ -33,7 +41,9 @@ module Handheld
 
       def initialize(_value) end
 
-      def execute(_register) end
+      def execute(registers)
+        registers[:instruction_pointer] += 1
+      end
     end
 
     class Acc
@@ -45,8 +55,23 @@ module Handheld
         @value = value.to_i
       end
 
-      def execute(register)
-        register[:accumulator] += @value
+      def execute(registers)
+        registers[:instruction_pointer] += 1
+        registers[:accumulator] += @value
+      end
+    end
+
+    class Jmp
+      def self.build(value)
+        new(value)
+      end
+
+      def initialize(value)
+        @value = value.to_i
+      end
+
+      def execute(registers)
+        registers[:instruction_pointer] += @value
       end
     end
   end

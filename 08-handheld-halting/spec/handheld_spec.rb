@@ -31,8 +31,33 @@ RSpec.describe Handheld do
     end
 
     context 'jmp' do
-      it 'next x lines'
-      it 'go back x lines'
+      it 'next x lines' do
+        boot_loader = <<~EOC
+          nop +0
+          nop +0
+          jmp +2
+          acc +1
+          nop +0
+        EOC
+        registers = Handheld.load(boot_loader)
+
+        expect(registers[:instruction_pointer]).to eq(5)
+        expect(registers[:accumulator]).to eq(0)
+      end
+      it 'go back x lines' do
+        boot_loader = <<~EOC
+          jmp +4
+          nop +0
+          acc +1
+          jmp +2
+          jmp -2
+          nop +0
+        EOC
+        registers = Handheld.load(boot_loader)
+
+        expect(registers[:instruction_pointer]).to eq(6)
+        expect(registers[:accumulator]).to eq(1)
+      end
     end
 
     it 'raises exception for unknown instructions' do
