@@ -11,25 +11,8 @@ module Handheld
       accumulator_prev: 0,
       execution_lines: []
     }
-    instructions = []
 
-    lines = code.split("\n")
-
-    lines.each do |line|
-      operation, params = line.split(' ')
-
-      instruction = case operation
-                    when 'nop'
-                      Instruction::Nop.build(params)
-                    when 'acc'
-                      Instruction::Acc.build(params)
-                    when 'jmp'
-                      Instruction::Jmp.build(params)
-                    else
-                      raise ParseError, "Unknow instruction: #{operation}"
-                    end
-      instructions << instruction
-    end
+    instructions = parse_instructions(code)
 
     registers[:execution_lines] = Array.new(instructions.size, 0)
 
@@ -41,9 +24,37 @@ module Handheld
 
       registers[:acc_current] = registers[:accumulator]
     end
-
-    puts "Registers: #{registers.inspect}"
     registers
+  end
+
+  def self.parse_instructions(code)
+    instructions = []
+    lines = code.split("\n")
+
+    lines.each do |line|
+      operation, params = line.split(' ')
+
+      instructions << instruction_builder(operation, params)
+    end
+    instructions
+  end
+
+  def self.instruction_builder(operation, params)
+    case operation
+    when 'nop'
+      Instruction::Nop.build(params)
+    when 'acc'
+      Instruction::Acc.build(params)
+    when 'jmp'
+      Instruction::Jmp.build(params)
+    else
+      raise ParseError, "Unknow instruction: #{operation}"
+    end
+  end
+
+  class << self
+    private :parse_instructions
+    private :instruction_builder
   end
 
   module Instruction
