@@ -5,7 +5,12 @@ module Handheld
   end
 
   def self.load(code)
-    registers = { accumulator: 0, instruction_pointer: 0 }
+    registers = {
+      accumulator: 0,
+      instruction_pointer: 0,
+      accumulator_prev: 0,
+      execution_lines: []
+    }
     instructions = []
 
     lines = code.split("\n")
@@ -26,10 +31,18 @@ module Handheld
       instructions << instruction
     end
 
-    while registers[:instruction_pointer] < instructions.size
+    registers[:execution_lines] = Array.new(instructions.size, 0)
+
+    while registers[:instruction_pointer] < instructions.size && registers[:execution_lines].all? { |i| i <= 1 }
+      registers[:acc_prev] = registers[:accumulator]
+      registers[:execution_lines][registers[:instruction_pointer]] += 1
+
       instructions[registers[:instruction_pointer]].execute(registers)
+
+      registers[:acc_current] = registers[:accumulator]
     end
 
+    puts "Registers: #{registers.inspect}"
     registers
   end
 
