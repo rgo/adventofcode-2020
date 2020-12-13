@@ -22,7 +22,7 @@ module Handheld
                     end
       instruction.execute(registers)
     end
-    registers[:accumulator]
+    registers
   end
 
   module Instruction
