@@ -5,14 +5,44 @@ module Handheld
   end
 
   def self.load(code)
+    instructions = parse_instructions(code)
+
+    run(instructions)
+  end
+
+  def self.load_fixer(code)
+    registers = {}
+    instructions = parse_instructions(code)
+
+    # brute force
+    instructions.size.times do |i|
+      modified_instructions = instructions.map(&:clone)
+
+      instruction = modified_instructions[i]
+
+      modified_instructions[i] = case instruction
+                                 when Instruction::Jmp
+                                   Instruction::Nop.build(instruction.value)
+                                 when Instruction::Nop
+                                   Instruction::Jmp.build(instruction.value)
+                                 else
+                                   next
+                                 end
+
+      registers = run(modified_instructions)
+      break if registers[:instruction_pointer] >= instructions.size
+    end
+
+    registers
+  end
+
+  def self.run(instructions)
     registers = {
       accumulator: 0,
       instruction_pointer: 0,
       accumulator_prev: 0,
       execution_lines: []
     }
-
-    instructions = parse_instructions(code)
 
     registers[:execution_lines] = Array.new(instructions.size, 0)
 
@@ -59,11 +89,15 @@ module Handheld
 
   module Instruction
     class Nop
+      attr_reader :value
+
       def self.build(value)
         new(value)
       end
 
-      def initialize(_value) end
+      def initialize(value)
+        @value = value
+      end
 
       def execute(registers)
         registers[:instruction_pointer] += 1
@@ -86,6 +120,8 @@ module Handheld
     end
 
     class Jmp
+      attr_reader :value
+
       def self.build(value)
         new(value)
       end

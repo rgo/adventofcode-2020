@@ -64,4 +64,23 @@ RSpec.describe Handheld do
       expect { Handheld.load('mul +42') }.to raise_error(Handheld::ParseError)
     end
   end
+
+  context 'boot loader fixer' do
+    it 'replaces jmps by nops' do
+      bootloader = <<~EOC
+        nop +0
+        acc +1
+        jmp +4
+        acc +3
+        jmp -3
+        acc -99
+        acc +1
+        jmp -4
+        acc +6
+      EOC
+      registers = Handheld.load_fixer(bootloader)
+
+      expect(registers[:accumulator]).to eq(8)
+    end
+  end
 end

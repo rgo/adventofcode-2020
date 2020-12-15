@@ -6,4 +6,4 @@ require 'open-uri'
 
 boot_loader = URI.open('input.txt').read
 
-puts Handheld.load(boot_loader)
+puts Handheld.load_fixer(boot_loader)
