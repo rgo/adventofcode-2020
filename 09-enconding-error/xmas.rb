@@ -21,4 +21,26 @@ class Xmas
 
     true
   end
+
+  def weakness
+    return nil if valid?
+
+
+    @input.each_index do |i|
+      j = i + 1
+      loop do
+        range = @input[i..j]
+        range_sum = range.sum
+
+        break if range_sum > @invalid
+
+        if range_sum == @invalid
+          return range.min + range.max
+        end
+
+        j += 1
+      end
+    end
+  end
+
 end

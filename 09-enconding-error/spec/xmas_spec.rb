@@ -4,6 +4,10 @@ require 'spec_helper'
 require './xmas'
 
 RSpec.describe Xmas do
+  let(:long_input) do
+    %w[35 20 15 25 47 40 62 55 65 95 102 117 150 182 127 219 299 277 309 576].map(&:to_i)
+  end
+
   context '#valid?' do
     context 'preamble 25 (1..25)' do
       let(:input) { Array(1..25) }
@@ -35,12 +39,16 @@ RSpec.describe Xmas do
 
     context 'long example' do
       it '127 is an invalid number' do
-        input = %w[35 20 15 25 47 40 62 55 65 95 102 117 150 182 127 219 299 277 309 576].map(&:to_i)
-
-        xmas = Xmas.new(input: input, preamble: 5)
+        xmas = Xmas.new(input: long_input, preamble: 5)
 
         expect(xmas.valid?).to be false
       end
     end
+  end
+
+  it 'weakness is 62' do
+    xmas = Xmas.new(input: long_input, preamble: 5)
+
+    expect(xmas.weakness).to eq 62
   end
 end
