@@ -8,4 +8,4 @@ input = URI.open('input.txt').readlines.map(&:to_i)
 
 xmas = Xmas.new(preamble: 25, input: input)
 
-xmas.valid?
+puts "Invalid number: #{xmas.invalid}" unless xmas.valid?
