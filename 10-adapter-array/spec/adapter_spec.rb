@@ -23,4 +23,17 @@ RSpec.describe Adapter do
       expect(adapter.multiply_differences).to eq 220
     end
   end
+
+  context 'arrangements' do
+    it 'counts for short input' do
+      adapter = Adapter.new(short_input)
+
+      expect(adapter.count_arrangements).to eq 8
+    end
+    it 'counts for big input' do
+      adapter = Adapter.new(big_input)
+
+      expect(adapter.count_arrangements).to eq 19208
+    end
+  end
 end
